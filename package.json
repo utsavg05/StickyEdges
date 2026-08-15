@@ -4,6 +4,14 @@
   "private": true,
   "author": "Sticky Edges contributors",
   "description": "Physical-feeling sticky notes that live on desktop edges.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/utsavg05/StickyEdges.git"
+  },
+  "homepage": "https://github.com/utsavg05/StickyEdges",
+  "bugs": {
+    "url": "https://github.com/utsavg05/StickyEdges/issues"
+  },
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "npm run build:main && concurrently -k \"npm:dev:renderer\" \"npm:dev:electron\"",
