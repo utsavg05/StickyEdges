@@ -1,31 +1,82 @@
 # Sticky Edges
 
-A Windows-first Electron prototype for physical-feeling sticky notes that tuck behind the desktop edge.
+Sticky Edges is a lightweight Windows desktop app that turns the edge of your screen into a persistent space for paper-like reminders. Create a note, tuck it against the desktop edge, and pull it back out whenever you need it—without opening a traditional notes app.
 
-## Run it
+![License](https://img.shields.io/badge/platform-Windows-0078D4?logo=windows&logoColor=white)
+![Built with Electron](https://img.shields.io/badge/built%20with-Electron-47848F?logo=electron&logoColor=white)
+
+## Features
+
+- Sticky notes that live at the desktop edge and smoothly reveal on hover.
+- Paper-inspired visuals: five colors, subtle texture, folded corners, shadows, and natural rotation.
+- Plain notes and interactive checklists.
+- Add, edit, check off, or delete individual checklist items.
+- Drag notes vertically to organize the desktop.
+- Persistent local storage for every note, including content, color, position, and checklist state.
+- `Ctrl + Shift + N` to create a new sticky instantly.
+- System-tray controls for creating, showing, tucking, and hiding notes.
+- Optional **Launch on Startup** toggle in the tray menu.
+- Automatic update checks through GitHub Releases.
+
+## Install
+
+Download the latest Windows installer from [GitHub Releases](https://github.com/utsavg05/StickyEdges/releases), then run **Sticky Edges Setup**.
+
+Windows SmartScreen may show a warning for unsigned community software. Select **More info → Run anyway** only if you downloaded the installer from this repository’s official Releases page.
+
+## How to use it
+
+1. Hover a tucked note to reveal it.
+2. Click a note to write or edit its contents.
+3. Drag the paper background to move it vertically.
+4. Open `•••` to change its color, switch between a plain note and checklist, or delete it.
+5. Use the tray icon to hide/show all notes, tuck all notes, create a new note, or enable launch on startup.
+
+Notes intentionally remain visible above other apps, including fullscreen content. Use **Hide Notes** in the tray whenever you want a completely clear screen.
+
+## Development
+
+### Requirements
+
+- Windows 10 or later
+- Node.js 22 or later
+
+### Run locally
 
 ```powershell
+git clone https://github.com/utsavg05/StickyEdges.git
+cd StickyEdges
 npm install
 npm run dev
 ```
 
-The first launch creates a paper-like stack of notes inspired by the supplied reference image. Hover a note to reveal it if tucked, edit its text, drag the paper vertically, and use `•••` for color, type, and deletion controls. Notes save locally. Press `Ctrl + Shift + N` to create and focus a new sticky.
-
-To create production assets:
+### Build an installer
 
 ```powershell
-npm run build
-npm run start
+npm run dist
 ```
 
-## Project map
+The generated NSIS installer is placed in `release/`.
 
-- `src/main/index.ts` owns the native Electron window, screen-edge geometry, global shortcut, and IPC validation.
-- `src/main/store.ts` persists the prototype note atomically in Electron user data.
-- `src/main/preload.ts` exposes the minimal secure renderer API.
-- `src/renderer/sticky-note.tsx` implements note editing, hover behavior, and drag intent.
-- `ARCHITECTURE.md` and `IMPLEMENTATION_PLAN.md` describe the route from this prototype to the full MVP.
+## Project structure
 
-## Current scope
+```text
+src/main/       Electron windows, tray controls, persistence, updates, and IPC
+src/renderer/   React sticky-note interface and animations
+public/         Tray and application icons
+.github/        GitHub Actions release workflow
+```
 
-This build includes multiple independently positioned right-edge notes, five paper colors, simple checklists, local persistence, the global create shortcut, and a native tray command menu. Left-edge placement, settings, collision handling, startup configuration, and fullscreen-aware visibility are next.
+## Releases and updates
+
+Every version tag beginning with `v` triggers the GitHub Actions release workflow. It builds the installer, publishes it to GitHub Releases, and generates update metadata for installed apps.
+
+For release instructions, see [RELEASING.md](RELEASING.md).
+
+## Contributing
+
+Issues and pull requests are welcome. Please keep the app lightweight, local-first, and focused on the simple “sticky notes attached to a monitor” experience.
+
+## License
+
+This project is open source. 
