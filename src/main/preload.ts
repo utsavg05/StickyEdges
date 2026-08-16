@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import type { ChecklistItem, NoteType, StickyApi, StickyColor } from './types';
 
 const api: StickyApi = {
+  createNote: () => ipcRenderer.invoke('sticky:create-note'),
   getNote: () => ipcRenderer.invoke('sticky:get-note'),
   saveContent: (content) => ipcRenderer.invoke('sticky:save-content', content),
   setTucked: (tucked) => ipcRenderer.invoke('sticky:set-tucked', tucked),

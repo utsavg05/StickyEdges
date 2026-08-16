@@ -22,6 +22,7 @@ export interface StickyNoteRecord {
 }
 
 export interface StickyApi {
+  createNote(): Promise<void>;
   getNote(): Promise<StickyNoteRecord>;
   saveContent(content: string): Promise<StickyNoteRecord>;
   setTucked(tucked: boolean): Promise<StickyNoteRecord>;

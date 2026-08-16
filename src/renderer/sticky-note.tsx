@@ -4,6 +4,15 @@ import { stickyColors, type ChecklistItem, type StickyNoteRecord } from '../main
 const id = () => crypto.randomUUID();
 
 export function StickyNote() {
+  if (new URLSearchParams(window.location.search).get('emptyState') === '1') return <EmptyState />;
+  return <NoteEditor />;
+}
+
+function EmptyState() {
+  return <main className="empty-state"><button onClick={() => void window.sticky.createNote()}><span className="empty-state__plus">+</span><span className="empty-state__label">New Sticky</span></button></main>;
+}
+
+function NoteEditor() {
   const [note, setNote] = useState<StickyNoteRecord | null>(null);
   const [dragging, setDragging] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);

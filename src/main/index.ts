@@ -12,6 +12,7 @@ let notes: StickyNoteRecord[] = [];
 const windows = new Map<string, BrowserWindow>();
 let tray: Tray | null = null;
 let notesHidden = false;
+let emptyStateWindow: BrowserWindow | null = null;
 
 const stamp = () => new Date().toISOString();
 const display = () => screen.getPrimaryDisplay().workArea;
@@ -65,7 +66,41 @@ function createNote(seed?: Partial<StickyNoteRecord>) {
   notes = [...notes, record];
   persist();
   createWindow(record);
+  syncEmptyState();
   return record;
+}
+
+function emptyStateBounds() {
+  const area = display();
+  return { x: area.x + area.width - 172, y: area.y + 24, width: 162, height: 52 };
+}
+
+function createEmptyStateWindow() {
+  const window = new BrowserWindow({
+    ...emptyStateBounds(), frame: false, transparent: true, resizable: false, movable: false,
+    show: false, skipTaskbar: true, alwaysOnTop: true, hasShadow: false,
+    webPreferences: { preload: join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false }
+  });
+  emptyStateWindow = window;
+  window.setAlwaysOnTop(true, 'screen-saver');
+  window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  window.on('closed', () => { emptyStateWindow = null; });
+  const url = app.isPackaged
+    ? `file://${join(__dirname, '../renderer/index.html')}?emptyState=1`
+    : 'http://localhost:5173?emptyState=1';
+  void window.loadURL(url);
+  window.once('ready-to-show', () => { window.setBounds(emptyStateBounds()); if (!notesHidden) window.showInactive(); });
+}
+
+function syncEmptyState() {
+  if (notes.length) {
+    emptyStateWindow?.destroy();
+    emptyStateWindow = null;
+  } else if (!emptyStateWindow || emptyStateWindow.isDestroyed()) {
+    createEmptyStateWindow();
+  } else if (!notesHidden) {
+    emptyStateWindow.showInactive();
+  }
 }
 
 function createWindow(note: StickyNoteRecord) {
@@ -100,6 +135,8 @@ function setNotesHidden(hidden: boolean) {
     if (hidden) window.hide();
     else window.showInactive();
   });
+  if (hidden) emptyStateWindow?.hide();
+  else syncEmptyState();
   refreshTrayMenu();
 }
 
@@ -163,10 +200,12 @@ function validText(value: unknown, limit = 400) {
 app.whenReady().then(() => {
   notes = loadNotes();
   notes.forEach(createWindow);
+  syncEmptyState();
   buildTray();
   enableAutoUpdates();
   globalShortcut.register('CommandOrControl+Shift+N', () => focusNote(createNote()));
 
+  ipcMain.handle('sticky:create-note', () => { focusNote(createNote()); });
   ipcMain.handle('sticky:get-note', (event) => senderNote(event));
   ipcMain.handle('sticky:save-content', (event, content: unknown) => save(senderNote(event), { content: validText(content) }));
   ipcMain.handle('sticky:set-tucked', (event, tucked: unknown) => {
@@ -190,7 +229,7 @@ app.whenReady().then(() => {
     return save(senderNote(event), { checklist: (items as ChecklistItem[]).slice(0, 8).map((item) => ({ ...item, text: item.text.slice(0, 80) })) });
   });
   ipcMain.handle('sticky:delete', (event) => {
-    const note = senderNote(event); notes = notes.filter((item) => item.id !== note.id); persist(); windows.get(note.id)?.close();
+    const note = senderNote(event); notes = notes.filter((item) => item.id !== note.id); persist(); windows.get(note.id)?.close(); syncEmptyState();
   });
 });
 
