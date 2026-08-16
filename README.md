@@ -79,4 +79,4 @@ Issues and pull requests are welcome. Please keep the app lightweight, local-fir
 
 ## License
 
-This project is open source. 
+Distributed under the [MIT License](LICENSE). You are free to use, modify, and distribute Sticky Edges in accordance with the license terms.
