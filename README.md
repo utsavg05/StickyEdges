@@ -5,6 +5,10 @@ Sticky Edges is a lightweight Windows desktop app that turns the edge of your sc
 ![License](https://img.shields.io/badge/platform-Windows-0078D4?logo=windows&logoColor=white)
 ![Built with Electron](https://img.shields.io/badge/built%20with-Electron-47848F?logo=electron&logoColor=white)
 
+## Launch demo
+
+▶ [Watch Sticky Edges in action](assets/sticky-edges-launch.mp4)
+
 ## Features
 
 - Sticky notes that live at the desktop edge and smoothly reveal on hover.
