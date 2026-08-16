@@ -7,7 +7,7 @@ Sticky Edges is a lightweight Windows desktop app that turns the edge of your sc
 
 ## Launch demo
 
-▶ [Watch Sticky Edges in action](assets/sticky-edges-launch.mp4)
+https://github.com/user-attachments/assets/277f957d-712c-43b1-8f33-04136df4ccc3
 
 ## Features
 
