@@ -8,6 +8,8 @@ const NOTE_WIDTH = 244;
 const NOTE_HEIGHT = 230;
 const PEEK_WIDTH = 32;
 const GAP = 16;
+const EMPTY_STATE_WIDTH = 162;
+const EMPTY_STATE_HEIGHT = 52;
 let notes: StickyNoteRecord[] = [];
 const windows = new Map<string, BrowserWindow>();
 let tray: Tray | null = null;
@@ -72,7 +74,15 @@ function createNote(seed?: Partial<StickyNoteRecord>) {
 
 function emptyStateBounds() {
   const area = display();
-  return { x: area.x + area.width - 172, y: area.y + 24, width: 162, height: 52 };
+  return { x: area.x + area.width - 172, y: area.y + 24, width: EMPTY_STATE_WIDTH, height: EMPTY_STATE_HEIGHT };
+}
+
+function moveEmptyStateBy(deltaY: number) {
+  if (!emptyStateWindow || emptyStateWindow.isDestroyed()) return;
+  const current = emptyStateWindow.getBounds();
+  const area = screen.getDisplayMatching(current).workArea;
+  const y = Math.max(area.y, Math.min(current.y + deltaY, area.y + area.height - EMPTY_STATE_HEIGHT));
+  emptyStateWindow.setBounds({ ...current, y });
 }
 
 function createEmptyStateWindow() {
@@ -217,6 +227,11 @@ app.whenReady().then(() => {
   ipcMain.handle('sticky:move-by', (event, delta: unknown) => {
     if (typeof delta !== 'number' || !Number.isFinite(delta)) throw new Error('Expected vertical movement');
     const note = senderNote(event); return save(note, { y: clampY(note.y + delta) });
+  });
+  ipcMain.handle('sticky:move-empty-state-by', (event, delta: unknown) => {
+    if (typeof delta !== 'number' || !Number.isFinite(delta)) throw new Error('Expected vertical movement');
+    if (!emptyStateWindow || emptyStateWindow.isDestroyed() || emptyStateWindow.webContents.id !== event.sender.id) throw new Error('Unknown empty-state window');
+    moveEmptyStateBy(delta);
   });
   ipcMain.handle('sticky:set-color', (event, color: unknown) => {
     if (!stickyColors.includes(color as typeof stickyColors[number])) throw new Error('Invalid color');

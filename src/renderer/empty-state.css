@@ -1,0 +1,7 @@
+.empty-state button:hover {
+  transform: rotate(-1.2deg);
+}
+
+.empty-state--dragging button {
+  cursor: grabbing;
+}

@@ -1,5 +1,6 @@
 import { type PointerEvent, useEffect, useRef, useState } from 'react';
 import { stickyColors, type ChecklistItem, type StickyNoteRecord } from '../main/types';
+import './empty-state.css';
 
 const id = () => crypto.randomUUID();
 
@@ -9,7 +10,66 @@ export function StickyNote() {
 }
 
 function EmptyState() {
-  return <main className="empty-state"><button onClick={() => void window.sticky.createNote()}><span className="empty-state__plus">+</span><span className="empty-state__label">New Sticky</span></button></main>;
+  const [dragging, setDragging] = useState(false);
+  const dragY = useRef(0);
+  const dragStartY = useRef(0);
+  const activePointerId = useRef<number | null>(null);
+  const draggingRef = useRef(false);
+  const didDrag = useRef(false);
+  const skipClick = useRef(false);
+  const queuedDragDelta = useRef(0);
+  const moveInFlight = useRef(false);
+
+  const flushDrag = () => {
+    if (moveInFlight.current || !queuedDragDelta.current) return;
+    const delta = queuedDragDelta.current;
+    queuedDragDelta.current = 0;
+    moveInFlight.current = true;
+    void window.sticky.moveEmptyStateBy(delta).finally(() => {
+      moveInFlight.current = false;
+      flushDrag();
+    });
+  };
+
+  const beginDrag = (event: PointerEvent<HTMLElement>) => {
+    if (event.button !== 0) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragY.current = event.screenY;
+    dragStartY.current = event.screenY;
+    activePointerId.current = event.pointerId;
+    draggingRef.current = false;
+    didDrag.current = false;
+  };
+  const drag = (event: PointerEvent<HTMLElement>) => {
+    if (activePointerId.current !== event.pointerId) return;
+    if (!draggingRef.current) {
+      if (Math.abs(event.screenY - dragStartY.current) < 8) return;
+      draggingRef.current = true;
+      didDrag.current = true;
+      setDragging(true);
+    }
+    const delta = event.screenY - dragY.current;
+    dragY.current = event.screenY;
+    if (!delta) return;
+    queuedDragDelta.current += delta;
+    flushDrag();
+  };
+  const endDrag = (event: PointerEvent<HTMLElement>) => {
+    if (activePointerId.current !== event.pointerId) return;
+    const wasDrag = didDrag.current;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    activePointerId.current = null;
+    draggingRef.current = false;
+    setDragging(false);
+    if (event.type === 'pointerup') {
+      skipClick.current = true;
+      if (!wasDrag) void window.sticky.createNote();
+    }
+  };
+
+  return <main className={`empty-state ${dragging ? 'empty-state--dragging' : ''}`} onPointerDown={beginDrag} onPointerMove={drag} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag}>
+    <button onClick={() => { if (skipClick.current) { skipClick.current = false; return; } void window.sticky.createNote(); }}><span className="empty-state__plus">+</span><span className="empty-state__label">New Sticky</span></button>
+  </main>;
 }
 
 function NoteEditor() {

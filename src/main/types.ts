@@ -27,6 +27,7 @@ export interface StickyApi {
   saveContent(content: string): Promise<StickyNoteRecord>;
   setTucked(tucked: boolean): Promise<StickyNoteRecord>;
   moveBy(deltaY: number): Promise<StickyNoteRecord>;
+  moveEmptyStateBy(deltaY: number): Promise<void>;
   setColor(color: StickyColor): Promise<StickyNoteRecord>;
   setType(type: NoteType): Promise<StickyNoteRecord>;
   saveChecklist(items: ChecklistItem[]): Promise<StickyNoteRecord>;
