@@ -1,6 +1,6 @@
 {
   "name": "sticky-edges",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "author": "Sticky Edges contributors",
   "description": "Physical-feeling sticky notes that live on desktop edges.",
