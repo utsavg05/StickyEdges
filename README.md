@@ -1,8 +1,8 @@
 # Sticky Edges
 
-Sticky Edges is a lightweight Windows desktop app that turns the edge of your screen into a persistent space for paper-like reminders. Create a note, tuck it against the desktop edge, and pull it back out whenever you need it—without opening a traditional notes app.
+Sticky Edges is a lightweight Windows and macOS desktop app that turns the edge of your screen into a persistent space for paper-like reminders. Create a note, tuck it against the desktop edge, and pull it back out whenever you need it—without opening a traditional notes app.
 
-![License](https://img.shields.io/badge/platform-Windows-0078D4?logo=windows&logoColor=white)
+![License](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-0078D4?logo=windows&logoColor=white)
 ![Built with Electron](https://img.shields.io/badge/built%20with-Electron-47848F?logo=electron&logoColor=white)
 
 ## Launch demo
@@ -24,9 +24,19 @@ https://github.com/user-attachments/assets/277f957d-712c-43b1-8f33-04136df4ccc3
 
 ## Install
 
-Download the latest Windows installer from [GitHub Releases](https://github.com/utsavg05/StickyEdges/releases), then run **Sticky Edges Setup**.
+Download the installer for your platform from [GitHub Releases](https://github.com/utsavg05/StickyEdges/releases).
+
+### Windows
+
+Run **Sticky Edges Setup**.
 
 Windows SmartScreen may show a warning for unsigned community software. Select **More info → Run anyway** only if you downloaded the installer from this repository’s official Releases page.
+
+### macOS
+
+Open the **Sticky Edges** `.dmg`, then drag the app into **Applications**. This early macOS build is unsigned, so macOS may block its first launch. Control-click the app in Applications, choose **Open**, then choose **Open** again. Alternatively, use **System Settings → Privacy & Security → Open Anyway** after the first launch attempt.
+
+The macOS release is a universal app for both Apple Silicon and Intel Macs. Updates are manual for now: download a newer DMG from GitHub Releases and replace the app in Applications.
 
 ## How to use it
 
@@ -42,7 +52,7 @@ Notes intentionally remain visible above other apps, including fullscreen conten
 
 ### Requirements
 
-- Windows 10 or later
+- Windows 10 or later, or macOS 11 or later
 - Node.js 22 or later
 
 ### Run locally
@@ -62,6 +72,16 @@ npm run dist
 
 The generated NSIS installer is placed in `release/`.
 
+### Build a macOS DMG
+
+On a Mac, run:
+
+```bash
+npm run dist:mac
+```
+
+This creates a universal, unsigned DMG in `release/`. macOS is required because the icon-generation and DMG tools are supplied by the operating system.
+
 ## Project structure
 
 ```text
@@ -73,7 +93,7 @@ public/         Tray and application icons
 
 ## Releases and updates
 
-Every version tag beginning with `v` triggers the GitHub Actions release workflow. It builds the installer, publishes it to GitHub Releases, and generates update metadata for installed apps.
+Every version tag beginning with `v` triggers the GitHub Actions release workflow. It publishes the Windows installer and an unsigned universal macOS DMG to the same GitHub Release. Windows installs receive automatic update metadata; macOS users install updates manually for now.
 
 For release instructions, see [RELEASING.md](RELEASING.md).
 

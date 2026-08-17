@@ -22,7 +22,10 @@
     "build:main": "tsc -p tsconfig.main.json",
     "start": "electron .",
     "dist": "npm run build && electron-builder --publish never",
-    "release": "npm run build && electron-builder --publish always"
+    "release": "npm run build && electron-builder --publish always",
+    "prepare:mac-icon": "bash scripts/create-mac-icon.sh",
+    "dist:mac": "npm run prepare:mac-icon && npm run build && electron-builder --mac --universal --publish never",
+    "release:mac": "npm run prepare:mac-icon && npm run build && electron-builder --mac --universal --publish always"
   },
   "build": {
     "appId": "com.stickyedges.app",
@@ -41,6 +44,18 @@
           "target": "nsis",
           "arch": [
             "x64"
+          ]
+        }
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": ".icon-build/app-icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
           ]
         }
       ]

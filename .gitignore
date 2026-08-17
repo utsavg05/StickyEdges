@@ -5,6 +5,7 @@ node_modules/
 dist/
 release/
 out/
+.icon-build/
 *.blockmap
 
 # Local environment and secrets
