@@ -137,7 +137,7 @@ function NoteEditor() {
   const changeItems = (items: ChecklistItem[]) => update(window.sticky.saveChecklist(items));
 
   return <main className={`sticky sticky--${note.color} ${dragging ? 'sticky--dragging' : ''} ${revealing ? 'sticky--revealing' : ''}`} onPointerEnter={reveal} onPointerLeave={tuckLater}>
-    <div className={`sticky__paper ${note.type === 'checklist' ? 'sticky__paper--checklist' : ''}`} onPointerDown={beginDrag} onPointerMove={drag} onPointerUp={endDrag}>
+    <div className={`sticky__paper ${note.type === 'checklist' ? 'sticky__paper--checklist' : 'sticky__paper--text'}`} onPointerDown={beginDrag} onPointerMove={drag} onPointerUp={endDrag}>
       <button className="sticky__menu" aria-label="Note options" onClick={() => setMenuOpen(!menuOpen)}>•••</button>
       {menuOpen && <div className="sticky__tools" onPointerEnter={reveal}>
         <div className="sticky__colors">{stickyColors.map((color) => <button key={color} className={`dot dot--${color}`} aria-label={`${color} note`} onClick={() => { update(window.sticky.setColor(color)); setMenuOpen(false); }} />)}</div>

@@ -12,7 +12,8 @@ button, input, textarea { font: inherit; }
 @keyframes paper-pop { 0% { transform: rotate(var(--note-tilt)) scale(.975); } 58% { transform: rotate(calc(var(--note-tilt) + .3deg)) scale(1.018); } 100% { transform: rotate(var(--note-tilt)) scale(1); } }
 @media (prefers-reduced-motion: reduce) { .sticky, .sticky__paper { transition: none; animation: none !important; } }
 .sticky__pin { position: absolute; z-index: 2; top: 9px; left: 50%; width: 9px; height: 9px; border-radius: 50%; background: #f2f0e8; box-shadow: 0 1px 2px #6f653f; }
-textarea { position: relative; z-index: 1; width: 100%; height: 130px; resize: none; border: 0; outline: 0; background: transparent; color: #262117; font: 21px/1.25 "Segoe Print", "Comic Sans MS", cursive; cursor: text; }
+textarea { position: relative; z-index: 1; width: 100%; height: 130px; resize: none; overflow-y: auto; border: 0; outline: 0; background: transparent; color: #262117; scrollbar-width: none; font: 21px/1.25 "Segoe Print", "Comic Sans MS", cursive; cursor: text; } textarea::-webkit-scrollbar { width: 0; height: 0; }
+.sticky__paper--text textarea { height: 100%; }.sticky__paper--text .sticky__hint { display: none; }
 .sticky__title { height: 36px; padding: 0 14px 0 1px; font-size: 20px; font-weight: 600; }
 .sticky__hint { position: absolute; z-index: 1; bottom: 10px; left: 20px; color: rgb(54 44 13 / .48); font: 10px/1 Arial, sans-serif; }.sticky__fold { position: absolute; right: 0; bottom: 0; width: 28px; height: 28px; background: linear-gradient(135deg, transparent 49%, rgb(111 86 21 / .18) 50%, rgb(255 249 194 / .8) 52%); }
 .sticky__menu { position: absolute; z-index: 5; right: 7px; top: 5px; border: 0; color: rgb(53 43 14 / .55); background: transparent; cursor: pointer; font: bold 14px/1 Arial, sans-serif; }.sticky__menu:hover { color: #2d250b; }
