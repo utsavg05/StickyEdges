@@ -9,6 +9,7 @@ const api: StickyApi = {
   moveBy: (deltaY) => ipcRenderer.invoke('sticky:move-by', deltaY),
   moveEmptyStateBy: (deltaY) => ipcRenderer.invoke('sticky:move-empty-state-by', deltaY),
   setColor: (color: StickyColor) => ipcRenderer.invoke('sticky:set-color', color),
+  setFontSize: (fontSize) => ipcRenderer.invoke('sticky:set-font-size', fontSize),
   setType: (type: NoteType) => ipcRenderer.invoke('sticky:set-type', type),
   saveChecklist: (items: ChecklistItem[]) => ipcRenderer.invoke('sticky:save-checklist', items),
   deleteNote: () => ipcRenderer.invoke('sticky:delete'),

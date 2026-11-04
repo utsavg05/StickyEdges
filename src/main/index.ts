@@ -2,7 +2,7 @@ import { app, BrowserWindow, globalShortcut, ipcMain, screen, Tray, Menu, native
 import { autoUpdater } from 'electron-updater';
 import { join } from 'node:path';
 import { loadNotes, saveNotes } from './store';
-import { stickyColors, type ChecklistItem, type NoteType, type StickyNoteRecord } from './types';
+import { MAX_NOTE_FONT_SIZE, MIN_NOTE_FONT_SIZE, DEFAULT_NOTE_FONT_SIZE, stickyColors, type ChecklistItem, type NoteType, type StickyNoteRecord } from './types';
 
 const NOTE_WIDTH = 244;
 const NOTE_HEIGHT = 230;
@@ -62,7 +62,7 @@ function save(note: StickyNoteRecord, update: Partial<StickyNoteRecord>) {
 function createNote(seed?: Partial<StickyNoteRecord>) {
   const count = notes.length;
   const record: StickyNoteRecord = {
-    id: crypto.randomUUID(), content: '', type: 'text', checklist: [], color: 'yellow', edge: 'right',
+    id: crypto.randomUUID(), content: '', type: 'text', checklist: [], color: 'yellow', fontSize: DEFAULT_NOTE_FONT_SIZE, edge: 'right',
     y: 40 + (count % 4) * (NOTE_HEIGHT + GAP), tucked: false, createdAt: stamp(), updatedAt: stamp(), ...seed
   };
   notes = [...notes, record];
@@ -236,6 +236,12 @@ app.whenReady().then(() => {
   ipcMain.handle('sticky:set-color', (event, color: unknown) => {
     if (!stickyColors.includes(color as typeof stickyColors[number])) throw new Error('Invalid color');
     return save(senderNote(event), { color: color as typeof stickyColors[number] });
+  });
+  ipcMain.handle('sticky:set-font-size', (event, fontSize: unknown) => {
+    if (typeof fontSize !== 'number' || !Number.isInteger(fontSize) || fontSize < MIN_NOTE_FONT_SIZE || fontSize > MAX_NOTE_FONT_SIZE) {
+      throw new Error(`Font size must be an integer between ${MIN_NOTE_FONT_SIZE} and ${MAX_NOTE_FONT_SIZE}`);
+    }
+    return save(senderNote(event), { fontSize });
   });
   ipcMain.handle('sticky:set-type', (event, type: unknown) => {
     if (type !== 'text' && type !== 'checklist') throw new Error('Invalid note type');

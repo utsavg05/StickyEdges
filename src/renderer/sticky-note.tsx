@@ -1,5 +1,5 @@
 import { type PointerEvent, useEffect, useRef, useState } from 'react';
-import { stickyColors, type ChecklistItem, type StickyNoteRecord } from '../main/types';
+import { MAX_NOTE_FONT_SIZE, MIN_NOTE_FONT_SIZE, stickyColors, type ChecklistItem, type StickyNoteRecord } from '../main/types';
 import './empty-state.css';
 
 const id = () => crypto.randomUUID();
@@ -135,19 +135,28 @@ function NoteEditor() {
     if (!dragging) return; event.currentTarget.releasePointerCapture(event.pointerId); setDragging(false); tuckLater();
   };
   const changeItems = (items: ChecklistItem[]) => update(window.sticky.saveChecklist(items));
+  const changeFontSize = (delta: number) => {
+    const fontSize = Math.max(MIN_NOTE_FONT_SIZE, Math.min(MAX_NOTE_FONT_SIZE, note.fontSize + delta));
+    if (fontSize !== note.fontSize) update(window.sticky.setFontSize(fontSize));
+  };
 
   return <main className={`sticky sticky--${note.color} ${dragging ? 'sticky--dragging' : ''} ${revealing ? 'sticky--revealing' : ''}`} onPointerEnter={reveal} onPointerLeave={tuckLater}>
     <div className={`sticky__paper ${note.type === 'checklist' ? 'sticky__paper--checklist' : 'sticky__paper--text'}`} onPointerDown={beginDrag} onPointerMove={drag} onPointerUp={endDrag}>
       <button className="sticky__menu" aria-label="Note options" onClick={() => setMenuOpen(!menuOpen)}>•••</button>
       {menuOpen && <div className="sticky__tools" onPointerEnter={reveal}>
         <div className="sticky__colors">{stickyColors.map((color) => <button key={color} className={`dot dot--${color}`} aria-label={`${color} note`} onClick={() => { update(window.sticky.setColor(color)); setMenuOpen(false); }} />)}</div>
+        <div className="sticky__font-size">
+          <button aria-label="Decrease text size" title="Decrease text size" disabled={note.fontSize <= MIN_NOTE_FONT_SIZE} onClick={() => changeFontSize(-1)}>−</button>
+          <output aria-label="Text size" aria-live="polite">{note.fontSize} px</output>
+          <button aria-label="Increase text size" title="Increase text size" disabled={note.fontSize >= MAX_NOTE_FONT_SIZE} onClick={() => changeFontSize(1)}>+</button>
+        </div>
         <button onClick={() => { update(window.sticky.setType(note.type === 'text' ? 'checklist' : 'text')); setMenuOpen(false); }}>{note.type === 'text' ? 'Make checklist' : 'Plain note'}</button>
         <button className="danger" onClick={() => void window.sticky.deleteNote()}>Delete note</button>
       </div>}
       <div className="sticky__pin" aria-hidden="true" />
-      {note.type === 'text' ? <textarea ref={editor} spellCheck={false} aria-label="Sticky note" value={note.content} maxLength={400} placeholder="Write a reminder…" onFocus={reveal} onBlur={(event) => { update(window.sticky.saveContent(event.target.value)); tuckLater(); }} onChange={(event) => setNote({ ...note, content: event.target.value })} /> : <>
-        <textarea ref={editor} spellCheck={false} className="sticky__title" aria-label="Checklist title" value={note.content} maxLength={100} placeholder="Checklist" onFocus={reveal} onBlur={(event) => update(window.sticky.saveContent(event.target.value))} onChange={(event) => setNote({ ...note, content: event.target.value })} />
-        <div className="checklist">{note.checklist.map((item) => <label key={item.id}><input type="checkbox" checked={item.checked} onChange={() => changeItems(note.checklist.map((candidate) => candidate.id === item.id ? { ...candidate, checked: !candidate.checked } : candidate))} /><input spellCheck={false} className="checklist__text" value={item.text} aria-label="Checklist item" onChange={(event) => setNote({ ...note, checklist: note.checklist.map((candidate) => candidate.id === item.id ? { ...candidate, text: event.target.value } : candidate) })} onBlur={() => changeItems(note.checklist)} /><button className="checklist__delete" aria-label={`Delete ${item.text || 'checklist item'}`} title="Delete item" onClick={() => changeItems(note.checklist.filter((candidate) => candidate.id !== item.id))}>×</button></label>)}</div>
+      {note.type === 'text' ? <textarea ref={editor} style={{ fontSize: note.fontSize }} spellCheck={false} aria-label="Sticky note" value={note.content} maxLength={400} placeholder="Write a reminder…" onFocus={reveal} onBlur={(event) => { update(window.sticky.saveContent(event.target.value)); tuckLater(); }} onChange={(event) => setNote({ ...note, content: event.target.value })} /> : <>
+        <textarea ref={editor} style={{ fontSize: note.fontSize * (20 / 21) }} spellCheck={false} className="sticky__title" aria-label="Checklist title" value={note.content} maxLength={100} placeholder="Checklist" onFocus={reveal} onBlur={(event) => update(window.sticky.saveContent(event.target.value))} onChange={(event) => setNote({ ...note, content: event.target.value })} />
+        <div className="checklist">{note.checklist.map((item) => <label key={item.id}><input type="checkbox" checked={item.checked} onChange={() => changeItems(note.checklist.map((candidate) => candidate.id === item.id ? { ...candidate, checked: !candidate.checked } : candidate))} /><input spellCheck={false} style={{ fontSize: note.fontSize * (16 / 21) }} className="checklist__text" value={item.text} aria-label="Checklist item" onChange={(event) => setNote({ ...note, checklist: note.checklist.map((candidate) => candidate.id === item.id ? { ...candidate, text: event.target.value } : candidate) })} onBlur={() => changeItems(note.checklist)} /><button className="checklist__delete" aria-label={`Delete ${item.text || 'checklist item'}`} title="Delete item" onClick={() => changeItems(note.checklist.filter((candidate) => candidate.id !== item.id))}>×</button></label>)}</div>
         {note.checklist.length < 8 && <button className="add-item" onClick={() => changeItems([...note.checklist, { id: id(), text: '', checked: false }])}>+ Add item</button>}
       </>}
       <span className="sticky__hint">drag to move</span><div className="sticky__fold" aria-hidden="true" />

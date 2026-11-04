@@ -15,6 +15,7 @@ https://github.com/user-attachments/assets/277f957d-712c-43b1-8f33-04136df4ccc3
 - Paper-inspired visuals: five colors, subtle texture, folded corners, shadows, and natural rotation.
 - Plain notes and interactive checklists.
 - Add, edit, check off, or delete individual checklist items.
+- Adjust each note’s text size from 7 to 32 px in its options menu.
 - Drag notes vertically to organize the desktop.
 - Persistent local storage for every note, including content, color, position, and checklist state.
 - `Ctrl + Shift + N` to create a new sticky instantly.
@@ -43,7 +44,7 @@ The macOS release is a universal app for both Apple Silicon and Intel Macs. Upda
 1. Hover a tucked note to reveal it.
 2. Click a note to write or edit its contents.
 3. Drag the paper background to move it vertically.
-4. Open `•••` to change its color, switch between a plain note and checklist, or delete it.
+4. Open `•••` to change its color and text size, switch between a plain note and checklist, or delete it.
 5. Use the tray icon to hide/show all notes, tuck all notes, create a new note, or enable launch on startup.
 
 Notes intentionally remain visible above other apps, including fullscreen content. Use **Hide Notes** in the tray whenever you want a completely clear screen.
